@@ -1,26 +1,40 @@
-(function($){
+(function($) {
     $.fn.extend({
-        mytoc: function(options){
+        mytoc: function(options) {
+            //default paramerters
             var defaultParams = {
-                prefix:'mytoc',
-                selectors:'h1, h2, h3',
-                context:'body'
+                prefix: 'mytoc',
+                selectors: 'h1, h2, h3',
+                context: 'body'
             };
-            var opts = $.extend({}, defaultParams, options);
-            var headings = $(opts.selectors, opts.context);
 
-            headings.each(function(i, heading){
-                $('<span/>').attr('id', opts.prefix + i).insertBefore(heading);
+            //use user settings override default options
+            var opts = $.extend({}, defaultParams, options);
+            //get all heading elements in given context
+            var headings = $(opts.selectors, opts.context);
+            //prepend <span id=prefix+i> to each headings
+            headings.each(function(i) {
+                $('<span/>').attr('id', opts.prefix + i).insertBefore(this);
             });
-            
-            return $(this).each(function(i, mytoc){
+
+            //add animation while jumping to target heading
+            var scrollTo = function(e){
+                e.preventDefault();
+                var targetPos = $(e.target).attr('href');
+                var scrollTo = $(targetPos).offset().top;
+                $('body').animate({scrollTop:scrollTo}, 400, 'swing', function(){
+                    location.hash = targetPos;
+                });
+            };
+
+            return $(this).each(function(i) {
                 var ul = $('<ul/>').attr('id', 'mytoc');
-                headings.each(function(i, heading){
-                    var a = $('<a/>').attr('href', '#'+opts.prefix + i).text($(heading).text());
-                    var li = $('<li/>').addClass(heading.tagName.toLowerCase() + '-' + opts.prefix).append(a);
+                headings.each(function(i) {
+                    var a = $('<a/>').attr('href', '#' + opts.prefix + i).text($(this).text()).bind('click', scrollTo);
+                    var li = $('<li/>').addClass(this.tagName.toLowerCase() + '-' + opts.prefix).append(a);
                     ul.append(li);
                 });
-                $(mytoc).html(ul);
+                $(this).html(ul);
             });
 
         }
