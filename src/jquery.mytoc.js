@@ -1,3 +1,10 @@
+/*!
+ * mytoc - jQuery Table of Contents Plugin
+ * v0.0.1
+ * http://www.cafestop.net
+ * copyright Cafestop 2013
+ * MIT License
+*/
 (function($) {
     $.fn.extend({
         mytoc: function(options) {
